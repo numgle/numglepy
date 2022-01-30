@@ -1,13 +1,14 @@
 from enum import Enum
-import requests
+from urllib.request import urlopen
 import json
 
 datasetUrl = "https://raw.githubusercontent.com/numgle/dataset/main/src/data.json"
 try:
-    req = requests.get(datasetUrl)
+    with urlopen(datasetUrl) as res:
+        content = res.read()
 except:
     print("Failed to load dataset")
-dataset = json.loads(req.text)
+dataset = json.loads(content)
 
 class Token(Enum):
     Empty = 1

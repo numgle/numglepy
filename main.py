@@ -1,11 +1,16 @@
-from flask import Flask
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import numgle
 
-app = Flask(__name__)
+port = 3001
 
-@app.route("/numgle/<param>")
-def convertNumgle(param):
-    return numgle.numglefy(param)
+class BasicHTTPReqHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.end_headers()
+        param = self.path.split("/")[-1]
+        numglefied = numgle.numglefy(param)
+        self.wfile.write(numglefied.encode())
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3001, debug=True)
+httpd = HTTPServer(('0.0.0.0', port), BasicHTTPReqHandler)
+httpd.serve_forever()
